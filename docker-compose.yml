@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  client:
+    build:
+      context: ./client
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - default
+    command: npm run dev
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: ./server
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+    command: npm run dev
+    depends_on:
+      - mongo
+    restart: on-failure
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongo-data:
